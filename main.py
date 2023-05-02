@@ -2,10 +2,13 @@ from PIL import Image
 global pos
 
 # function that creates a line on the image of the color that is given (in this case it's only black)
-def line(Width : int = 1):
+def line(Width : int = 1, color = "black"):
     global pos
     Width_ = Width
-    color = (0,0,0) # = Black
+    if color == "black":
+        color = (0,0,0) # = Black
+    else:
+        color = (255,255,255)
     Width += pos
     for width in range(pos,Width):
         for height in range(150,251):
