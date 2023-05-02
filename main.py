@@ -1,18 +1,19 @@
 from PIL import Image  
 global pos
-def line(Width : int = 1 ,color = "black"):
+
+# function that creates a line on the image of the color that is given (in this case it's only black)
+def line(Width : int = 1):
     global pos
     Width_ = Width
-    if color == "white":
-        color = (255,255,255)
-    else:
-        color = (0,0,0)
+    color = (0,0,0) # = Black
     Width += pos
     for width in range(pos,Width):
         for height in range(150,251):
-            img.putpixel((width,height),color) #(pos.x,pos.y),(colorR,colorG,colorB
+            img.putpixel((width,height),color) #(pos.x,pos.y),(colorR,colorG,colorB)
     pos += Width_
-    
+
+# Special Encoding to create the lines on the image, each number corresponds to a line
+# Might replace Encoding with a formula that I believe exists which usies a character's ASCII value
 def EncodeCharacter(C:str):
     #1 = Black Thin
     #2 = Black Wide
@@ -65,8 +66,10 @@ def EncodeCharacter(C:str):
         "*":"141323231"
     }
     return D.get(C)
-    
+
+# Decode the number to a line  
 def NumToLine(n,i):
+    global pos
     n = int(n)
     thin = 2
     wide = 4
@@ -77,52 +80,51 @@ def NumToLine(n,i):
     elif n == 2:
         line(wide)
     elif n == 3:
-        line(thin,"white")
+        pos += thin
     elif n == 4:
-        line(wide,"white")
+        pos += wide
 
-
-def star():
-    
-    #first space
-    line(2,"white")
-    # -----
-    line(2)
-    line(4,"white")
-    line(2)
-    line(2,"white")
-    line(4)
-    line(2,"white")
-    line(4)
-    line(2,"white")
-    line(2)
+#Input from the user
 text = str(input("Give text\n"))
+
+#For checking reasons 
 alphabet_lower = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
 alphabet_upper = list(map(lambda x:x.upper(),alphabet_lower))
 characters = [" ","-","$","%",".","/","+","*"]
 numbers = [str(i) for i in range(10)]
+
+#Adds a star as the first character because every barcode starts and ends with a star
 Text = "*"
+#Makes lower case character upper case
 for i in text:
     if i in alphabet_lower:
         Text = Text + i.upper()
     else:
         Text = Text + i
+#==================
 del text
+#Raises an error if there is an invalid character
 for i in Text:
     if i not in characters and i not in alphabet_upper and i not in numbers:
         raise Exception("Invalid character")
+#============================
+
+#Adds a star as the last character because every barcode starts and ends with a star
 Text = Text + "*"
 pos = 10
+#Adjusts the picture's width depending on the text's length
 image_width = (len(Text)) * 30
+#Image height is static
 image_height = 400
 
 img  = Image.new( mode = "RGB", size = (image_width, image_height),color=(255,255,255) )
 
+#Creates the image
 for i in Text:
     Index = 0
     for j in EncodeCharacter(i):    
         Index += 1
         NumToLine(j,Index)
 
+#Shows the image
 img.show()
-
